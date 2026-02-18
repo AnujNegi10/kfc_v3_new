@@ -607,8 +607,9 @@ const App: React.FC = () => {
         - Never just talk — always pair your response with a UI action: showCategory, addToCart, showOffers, or checkout.
 
         PRODUCT NAME RULES:
-        - Just pass the product name as spoken by the user. The backend does smart fuzzy matching.
-        - Do NOT modify or guess product names. Pass the user's words directly.
+        - NEVER pass Hindi or other non-English scripts (like "चना बर्गर") to the addToCart or search tools.
+        - You MUST translate any product names mentioned in other languages into their English equivalents before calling a tool (e.g., "चना बर्गर" -> "Chana Burger", "7 Up" -> "7UP").
+        - The backend database is only in English, so your tool arguments MUST be in English.
         - Use '&' instead of 'and' in product names.
 
         MENU CATEGORIES:
