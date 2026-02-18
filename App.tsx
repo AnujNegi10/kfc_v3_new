@@ -308,13 +308,18 @@ const App: React.FC = () => {
                 if (fc.name === 'addToCart') {
                   const rawInput = (fc.args.productId as string)?.toUpperCase() || "";
                   const inputId = rawInput.replace(/\s+and\s+/g, ' & ');
+                  const searchStr = inputId.toLowerCase();
+
                   // Search in current products (using ref for latest data)
-                  let product = productsRef.current.find(m => String(m.id).toLowerCase() === inputId);
+                  let product = productsRef.current.find(m =>
+                    String(m.id).toLowerCase() === searchStr ||
+                    m.name.toLowerCase() === searchStr
+                  );
 
                   if (!product) {
                     product = productsRef.current.find(m =>
-                      m.name.toLowerCase().includes(inputId) ||
-                      inputId.includes(m.name.toLowerCase())
+                      m.name.toLowerCase().includes(searchStr) ||
+                      searchStr.includes(m.name.toLowerCase())
                     );
                   }
 
@@ -326,13 +331,19 @@ const App: React.FC = () => {
                       const searchData = await res.json();
 
                       if (searchData && Array.isArray(searchData) && searchData.length > 0) {
-                        if (searchData.length > 1 && searchData.length <= 4) {
+                        // CRITICAL: If there's an EXACT name match, use it immediately and skip ambiguity
+                        const exactMatch = searchData.find((item: any) => item.name.toUpperCase() === inputId.toUpperCase());
+
+                        if (exactMatch) {
+                          product = exactMatch;
+                          console.log(`[AI] Exact fuzzy match found: ${product.name}`);
+                        } else if (searchData.length > 1 && searchData.length <= 4) {
                           const options = searchData.map((item: any) => item.name).join(', ');
                           response = `I found multiple versions: ${options}. Please ask the user which one they would like to add.`;
                           console.log(`[AI-Tool] Ambiguity found: ${options}`);
                           // No product set, so AI will react to the response string
                         } else {
-                          // Either 1 result or > 4 (too many to ask, so pick top)
+                          // Pick top match
                           product = searchData[0];
                           console.log(`[AI] Using top match: ${product.name}`);
                         }
@@ -459,7 +470,7 @@ const App: React.FC = () => {
                   }
 
                   setActiveStage('BILL');
-                  response = "Here is your final bill. Please review and click to pay." + suggestion;
+                  response = `Proceeding to checkout. Total: ₹${currentTotal}. Here is your final bill summary.${suggestion}`;
                 }
                 functionResponses.push({
                   id: fc.id,
@@ -525,12 +536,13 @@ const App: React.FC = () => {
 
         KNOWLEDGE AND CART RULES
         - TOTAL PRICE RULE (ABSOLUTE — ZERO EXCEPTIONS):
-          * After every addToCart or removeFromCart tool call, you will receive a response string like: "Added X. Entire Bucket now: ... Total: ₹Y."
-          * You MUST extract the number after "Total: ₹" from that response and speak EXACTLY that number. 
-          * NEVER do arithmetic yourself. NEVER add prices mentally. NEVER multiply quantity × price.
-          * If you receive "Total: ₹450", say "450". Not 449, not 451. Exactly 450.
-          * If you are unsure, say "aapka total update ho gaya hai" and read the number from the tool response.
-          * NEVER apologize for a wrong total or correct yourself — the tool response is always right, just read it.
+          * After every tool call (addToCart, removeFromCart, checkout), you receive a response containing: "Total: ₹Y."
+          * You MUST extract the number after "Total: ₹" and speak EXACTLY that number. 
+          * BATCHED CALLS: If the user adds multiple items at once (e.g., "Add 2 Pepsi and 1 Burger"), you will call the tool multiple times. You receive multiple responses. You MUST ONLY speak the total from the VERY LAST RESPONSE of the turn. Ignore previous totals.
+          * If a tool response is missing the total (e.g. error or product not found), do NOT mention any total or price in your reply.
+          * NEVER do arithmetic. NEVER guess. NEVER use your own memory of past prices. The latest tool response is the ONLY source of truth.
+          * NEVER apologize for a wrong total. Just read the one from the tool.
+
         - QUANTITY: Default to 1 unless the user specifies otherwise.
         - GRAMMAR: Every response must be grammatically clean and natural in its language.
 
