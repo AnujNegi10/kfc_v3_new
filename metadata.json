@@ -1,0 +1,7 @@
+{
+  "name": "KFC Smart Voice - India",
+  "description": "Premium real-time voice ordering web app using Gemini Live API. Mobile-first experience with tool calling UI orchestration.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
