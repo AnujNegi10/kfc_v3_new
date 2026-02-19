@@ -91,7 +91,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onAddToCart, onStartAI }) => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={onStartAI}
-                    className="absolute top-6 right-6 z-[110] w-32 h-32 md:w-36 md:h-36 bg-[#181a1b] rounded-[2rem] flex flex-col items-center justify-center text-center border border-white/10 shadow-[0_0_40px_rgba(228,0,43,0.3)] group hover:border-[#E4002B]/40 transition-all duration-500"
+                    className="absolute top-6 right-6 z-[110] w-32 h-20 md:w-25 md:h-25 bg-[#181a1b] rounded-[2rem] flex flex-col items-center justify-center text-center border border-white/10 shadow-[0_0_40px_rgba(228,0,43,0.3)] group hover:border-[#E4002B]/40 transition-all duration-500"
                 >
                     <div className="flex gap-1 items-center mb-2 h-4">
                         {[1, 2, 3].map(i => (
@@ -103,7 +103,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onAddToCart, onStartAI }) => {
                             />
                         ))}
                     </div>
-                    <span className="text-[10px] md:text-[11px] font-black leading-tight text-white group-hover:text-white uppercase tracking-widest px-2">
+                    <span className="text-[10px] md:text-[8px] font-black leading-tight text-white group-hover:text-white uppercase tracking-widest px-2">
                         ORDER WITH OUR <br /> AI AGENT
                     </span>
                 </motion.button>
@@ -149,14 +149,14 @@ const MenuPage: React.FC<MenuPageProps> = ({ onAddToCart, onStartAI }) => {
                                 placeholder="Find some crispy food..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white border-2 border-transparent focus:border-[#E4002B] rounded-2xl py-4 pl-12 pr-4 text-sm font-black text-black placeholder-gray-400 transition-all outline-none"
+                                className="w-2/3 bg-white border-2 border-transparent focus:border-[#E4002B] rounded-2xl py-4 pl-12 pr-4 text-sm font-black text-black placeholder-gray-400 transition-all outline-none"
                             />
                         </div>
                     </header>
 
                     {/* Scrolling Product Grid */}
                     <div className="flex-1 overflow-y-auto p-4 md:p-10 custom-scrollbar bg-[#181a1b]">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-4 xl:grid-cols-4 gap-6">
                             <AnimatePresence mode="popLayout">
                                 {filteredProducts.map((product) => (
                                     <ProductCard

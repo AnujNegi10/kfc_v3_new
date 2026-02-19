@@ -16,10 +16,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAdd }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className="bg-white rounded-2xl overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col relative"
+      className="bg-white rounded-xl overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col relative"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/3] p-4 bg-white flex items-center justify-center">
+      <div className="relative aspect-[4/3] p-4 bg-white flex items-center justify-center ">
         <img
           src={product.image}
           alt={product.name}
